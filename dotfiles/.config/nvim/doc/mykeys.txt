@@ -1,0 +1,67 @@
+
+*mykeys.txt*   Custom Neovim Keybindings Help                     *mykeys*
+
+==============================================================================
+CUSTOM NEOVIM KEYBINDINGS                                         *mykeys*
+
+FOLDERS AND FILES                                         *mykeys-files*
+------------------------------------------------------------------------------
+<C-n>, <Leader>n         :NERDTreeToggle       Toggle NERDTree file browser
+<Leader>db               :DBUI                 Open Dadbod database UI
+
+LSP AND AUTOCOMPLETE                                     *mykeys-lsp*
+------------------------------------------------------------------------------
+K                      Show hover documentation
+<C-h> (Insert mode)    Show function signature help
+<Leader>d              Open floating diagnostic message
+
+SEARCH AND TELESCOPE                                    *mykeys-telescope*
+------------------------------------------------------------------------------
+<Leader>ff             Find files
+<Leader>fg             Live grep (search in content)
+<Leader>fb             Open buffers list
+<Leader>fh             Search help tags
+<Leader>fc             Search for classes/interfaces/enums (LSP symbols)
+
+TROUBLE (DIAGNOSTICS AND SYMBOLS)                         *mykeys-trouble*
+------------------------------------------------------------------------------
+<Leader>xx             Open diagnostics list (Trouble)
+<Leader>xs             Open symbols list (Trouble)
+
+BUFFERS AND TABS                                          *mykeys-buffers*
+------------------------------------------------------------------------------
+<Tab>                 Next buffer (Bufferline)
+<S-Tab>               Previous buffer
+<Leader>bc            Close current buffer (Bdelete)
+
+SPLITS AND WINDOWS                                         *mykeys-splits*
+------------------------------------------------------------------------------
+<Leader>sh            Horizontal split
+<Leader>sv            Vertical split
+<Leader>sc            Close current split
+<Leader>=             Equalize split sizes
+<Leader>sk/sj/sh/sl   Move current split: up/down/left/right
+
+WINDOW NAVIGATION                                       *mykeys-navigation*
+------------------------------------------------------------------------------
+<C-h/j/k/l>           Move between windows
+
+TERMINAL MANAGEMENT                                    *mykeys-terminal*
+------------------------------------------------------------------------------
+<Leader>tt            Open terminal in horizontal split
+<Esc> (in terminal)   Return to normal mode
+
+COMMENTING                                              *mykeys-comments*
+------------------------------------------------------------------------------
+gcc                   Comment/uncomment line
+gc (visual)           Comment/uncomment selection
+
+GIT                                                 *mykeys-git*
+------------------------------------------------------------------------------
+<leader>gg           Lazygit TUI
+<leader>gp           Preview hunk
+]c                   Next hunk
+[c                   Previous hunk
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:

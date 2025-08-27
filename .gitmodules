@@ -1,0 +1,30 @@
+[submodule "suckless/dwm"]
+	path = suckless/dwm
+	url = https://github.com/hexmason/dwm.git
+[submodule "suckless/st"]
+	path = suckless/st
+	url = https://github.com/hexmason/st.git
+[submodule "suckless/dmenu"]
+	path = suckless/dmenu
+	url = https://git.suckless.org/dmenu
+[submodule "suckless/sxiv"]
+	path = suckless/sxiv
+	url = https://github.com/xyb3rt/sxiv.git
+[submodule "scripts/rofi-bluetooth"]
+	path = scripts/rofi-bluetooth
+	url = https://github.com/nickclyde/rofi-bluetooth.git
+[submodule "scripts/rofi-mixer"]
+	path = scripts/rofi-mixer
+	url = https://github.com/joshpetit/rofi-mixer.git
+[submodule "scripts/oomox-gtk-theme"]
+	path = scripts/oomox-gtk-theme
+	url = https://github.com/themix-project/oomox-gtk-theme.git
+[submodule "scripts/archdroid-icon-theme"]
+	path = scripts/archdroid-icon-theme
+	url = https://github.com/themix-project/archdroid-icon-theme.git
+[submodule "scripts/wal-telegram"]
+	path = scripts/wal-telegram
+	url = https://github.com/guillaumeboehm/wal-telegram
+[submodule "dotfiles/.config/ranger/plugins/ranger_devicons"]
+	path = dotfiles/.config/ranger/plugins/ranger_devicons
+	url = https://github.com/alexanderjeurissen/ranger_devicons

@@ -1,0 +1,12 @@
+mykeys	mykeys.txt	/*mykeys*
+mykeys	mykeys.txt	/*mykeys*
+mykeys-buffers	mykeys.txt	/*mykeys-buffers*
+mykeys-comments	mykeys.txt	/*mykeys-comments*
+mykeys-files	mykeys.txt	/*mykeys-files*
+mykeys-lsp	mykeys.txt	/*mykeys-lsp*
+mykeys-navigation	mykeys.txt	/*mykeys-navigation*
+mykeys-splits	mykeys.txt	/*mykeys-splits*
+mykeys-telescope	mykeys.txt	/*mykeys-telescope*
+mykeys-terminal	mykeys.txt	/*mykeys-terminal*
+mykeys-trouble	mykeys.txt	/*mykeys-trouble*
+mykeys.txt	mykeys.txt	/*mykeys.txt*

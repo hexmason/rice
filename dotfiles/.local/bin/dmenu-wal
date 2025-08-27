@@ -1,0 +1,12 @@
+#!/bin/sh
+
+source "$HOME/.cache/wal/colors.sh"
+
+normbgcolor="$background"
+normfgcolor="$foreground"
+selbgcolor="$color2"
+selfgcolor="$cursor"
+font="JetBrainsMono Nerd Font:size=14:antialias=true:autohint=true"
+
+dmenu -i -fn "$font" -nb "$normbgcolor" -nf "$normfgcolor" -sb "$selbgcolor" -sf "$selfgcolor" "$@"
+

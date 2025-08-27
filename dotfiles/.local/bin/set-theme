@@ -1,0 +1,148 @@
+#!/bin/bash
+
+# set -euo pipefail
+IFS=$'\n\t'
+
+for cmd in wal pywalfox sxiv xdotool dunst; do
+    if ! command -v "$cmd" &>/dev/null; then
+        echo "Error: command '$cmd' not found."
+    exit 1
+    fi
+done
+
+source "$HOME/.cache/wal/colors.sh"
+
+path="${1:-}"
+
+show_help() {
+    cat <<EOF
+Usage: ${0##*/} [PATH_TO_IMAGE_OR_DIRECTORY]
+
+If PATH is provided, opens sxiv to select an image and generates theme from it.
+If no PATH is provided, restores the previous theme from cache.
+
+Options:
+  -h, --help    Show this help message and exit.
+
+Examples:
+  ${0##*/} ~/Pictures/wallpapers
+  ${0##*/}               
+EOF
+}
+
+if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
+    show_help
+    exit 0
+fi
+
+set_qt_theme() {
+    local config_path="$1"
+
+    local active_colors="$color7, $color2, $color14, $color12, $color0, $color13, $color7, $color7, $color7, $color0, $color0, $color8, $color2, $color7, $color12, $color14, $color0, $color0, $color0, $color7, $color7"
+    local inactive_colors="$active_colors"
+    local disabled_colors="#808080, $color2, $color14, $color12, $color0, $color13, #808080, $color7, #808080, $color0, $color0, $color8, $color2, #808080, $color12, $color14, $color0, $color0, $color0, $color7, $color7"
+
+    sed -i "s/^active_colors=.*$/active_colors=$active_colors/" "$config_path"
+    sed -i "s/^inactive_colors=.*$/inactive_colors=$inactive_colors/" "$config_path"
+    sed -i "s/^disabled_colors=.*$/disabled_colors=$disabled_colors/" "$config_path"
+}
+
+set_gtk_theme() {
+    themix-oomox-gtk-theme -o wal-colors ~/.cache/wal/colors-oomox
+    themix-archdroid-icon-theme -o wal-icons ~/.cache/wal/colors-oomox
+}
+
+set_flameshot_theme() {
+    local config_path="$1"
+
+    sed -i "s/^contrastUiColor=.*$/contrastUiColor=$foreground/" "$config_path"
+    sed -i "s/^uiColor=.*$/uiColor=$color2/" "$config_path"
+}
+
+set_dunst_theme() {
+    local config_path="$1"
+
+    sed -i "s/dmenu = .*$/dmenu = dmenu-wal/ -p dunst:" "$config_path"
+    sed -i "s/background = .*$/background = \"$background\"/" "$config_path"
+    sed -i "s/foreground = .*$/foreground = \"$foreground\"/" "$config_path"
+    sed -i "s/frame_color = .*$/frame_color = \"$color2\"/" "$config_path"
+    sed -i "s/highlight = .*$/highlight = \"$color14\"/" "$config_path"
+
+    dunstctl reload
+}
+
+set_color_variables() {
+    normbordercolor="$color8"
+    normbgcolor="$background"
+    normfgcolor="$foreground"
+    selbordercolor="$foreground"
+    selbgcolor="$color2"
+    selfgcolor="$cursor"
+}
+
+set_dwm_colors() {
+    local xresources_path="$1"
+
+    sed -i "s/^dwm\.normbordercolor:.*$/dwm.normbordercolor: $normbordercolor/" "$xresources_path"
+    sed -i "s/^dwm\.normbgcolor:.*$/dwm.normbgcolor: $normbgcolor/" "$xresources_path"
+    sed -i "s/^dwm\.normfgcolor:.*$/dwm.normfgcolor: $normfgcolor/" "$xresources_path"
+    sed -i "s/^dwm\.selbordercolor:.*$/dwm.selbordercolor: $selbgcolor/" "$xresources_path"
+    sed -i "s/^dwm\.selbgcolor:.*$/dwm.selbgcolor: $selbgcolor/" "$xresources_path"
+    sed -i "s/^dwm\.selfgcolor:.*$/dwm.selfgcolor: $selfgcolor/" "$xresources_path"
+}
+
+set_rofi_colors() {
+    cp "$HOME/.cache/wal/colors-rofi-dark.rasi" "$HOME/.config/rofi/"
+}
+
+restore_previous_theme() {
+    wal -R -q
+    pywalfox update
+    xrdb -merge "$HOME/.Xresources"
+    xdotool key Super+F5
+}
+
+apply_new_theme() {
+    local path="$1"
+
+    if [[ ! -e "$path" ]]; then
+        echo "Error: path '$path' not exist."
+        exit 1
+    fi
+
+    local image_path
+    image_path=$(find "$path" -type f | sxiv -t -o -i)
+
+    if [[ -z "$image_path" ]]; then
+        echo "Exit: Image not found."
+        exit 1
+    fi
+
+    wal --cols16 -q -i "$image_path"
+    pywalfox update
+    source "$HOME/.cache/wal/colors.sh"
+
+    set_color_variables
+
+    set_dwm_colors "$HOME/.Xresources"
+    set_rofi_colors
+    set_flameshot_theme "$HOME/.config/flameshot/flameshot.ini"
+    set_dunst_theme "$HOME/.config/dunst/dunstrc"
+
+    xrdb -merge "$HOME/.Xresources"
+    xdotool key Super+F5
+    wal-telegram --palette "$HOME/.cache/wal/colors.sh" -g -r
+    set_qt_theme "$HOME/.config/qt5ct/colors/rice.conf"
+    set_qt_theme "$HOME/.config/qt6ct/colors/rice.conf"
+    set_gtk_theme
+}
+
+main() {
+    if [[ -z "$path" ]]; then
+        restore_previous_theme
+    else
+        apply_new_theme "$path"
+    fi
+}
+
+main
