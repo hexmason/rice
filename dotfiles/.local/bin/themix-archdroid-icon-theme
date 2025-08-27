@@ -1,0 +1,4 @@
+#!/bin/sh
+cd ~/.local/share/themix/archdroid-icon-theme &&
+exec ./change_color.sh "$@"
+

@@ -83,6 +83,13 @@ uninstall_submodule_scripts() {
     done
 }
 
+uninstall_themix() {
+    log "Uninstalling themix..."
+
+    run rm "$HOME/.local/share/themix/oomox-gtk-theme"
+    run rm "$HOME/.local/share/themix/archdroid-icon-theme"
+}
+
 uninstall_suckless_programs() {
     log "Uninstalling suckless programs..."
     local base="$SCRIPT_DIR/suckless"

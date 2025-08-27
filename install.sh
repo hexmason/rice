@@ -78,7 +78,7 @@ check_dependencies() {
 
 create_symlink() {
     local target="$1" link="$2"
-    mkdir -p -- "$(dirname -- "$link")"
+    run mkdir -p -- "$(dirname -- "$link")"
 
     if [[ -L "$link" && "$(readlink -- "$link")" == "$target" ]]; then
         log "Symlink $link already exists → skip"
@@ -104,7 +104,7 @@ create_symlink() {
 
 install_configs() {
     log "Installing configs..."
-    mkdir -p -- "$HOME/.config"
+    run mkdir -p -- "$HOME/.config"
     local target_dir="$SCRIPT_DIR/dotfiles/.config"
 
     for conf in "$target_dir"/*; do
@@ -123,7 +123,7 @@ install_configs() {
 
 install_local_bin() {
     log "Installig scripts..."
-    mkdir -p "$HOME/.local/bin"
+    run mkdir -p -- "$HOME/.local/bin"
     local target_dir="$SCRIPT_DIR/dotfiles/.local/bin"
     
     for script in "$target_dir"/*; do
@@ -136,6 +136,7 @@ install_local_bin() {
 
 install_submodule_scripts() {
     log "Installing scripts from submodules..."
+    run mkdir -p -- "$HOME/.local/bin"
     local base="$SCRIPT_DIR/scripts"
     [[ -d "$base" ]] || { warn "No submodule scripts directory"; return 0; }
     
@@ -144,13 +145,14 @@ install_submodule_scripts() {
     create_symlink "$base/wal-telegram/wal-telegram" "$HOME/.local/bin/wal-telegram"
 }
 
-install_themix_scripts() {
-    log "Installing themix scripts..."
+install_themix() {
+    log "Installing themix..."
+    run mkdir -p -- "$HOME/.local/share/themix"
     local base="$SCRIPT_DIR/scripts"
     [[ -d "$base" ]] || { warn "No submodule scripts directory"; return 0; }
 
-    create_symlink "$base/oomox-gtk-theme/change_color.sh" "$HOME/.local/bin/themix-oomox-gtk-theme"
-    create_symlink "$base/archdroid-icon-theme/change_color.sh" "$HOME/.local/bin/themix-archdroid-icon-theme"
+    create_symlink "$base/oomox-gtk-theme" "$HOME/.local/share/themix/oomox-gtk-theme"
+    create_symlink "$base/archdroid-icon-theme" "$HOME/.local/share/themix/archdroid-icon-theme"
 }
 
 suckless_injection() {

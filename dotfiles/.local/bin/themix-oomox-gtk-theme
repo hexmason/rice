@@ -1,0 +1,4 @@
+#!/bin/sh
+cd ~/.local/share/themix/oomox-gtk-theme &&
+exec ./change_color.sh "$@"
+
