@@ -118,7 +118,7 @@ install_configs() {
         local name
         name=$(basename -- "$conf")
         create_symlink "$conf" "$HOME/$name"
-    done < <(find "$SCRIPT_DIR/dotfiles" -maxdepth 1 -type f)
+    done < <(find "$SCRIPT_DIR/dotfiles" -maxdepth 1 -type f -print0)
 }
 
 install_local_bin() {

@@ -46,7 +46,7 @@ uninstall_configs() {
         while IFS= read -r link; do
             [[ "$(readlink -f "$link")" == "$conf" ]] && run rm "$link"
         done < <(find ~/.config -type l)
-    done < <(find "$SCRIPT_DIR/dotfiles" -maxdepth 1 -type f)
+    done < <(find "$SCRIPT_DIR/dotfiles" -maxdepth 1 -type f -print0)
 }
 
 uninstall_local_bin() {
@@ -75,13 +75,9 @@ uninstall_submodule_scripts() {
         while IFS= read -r -d '' script; do
             local name
             name=$(basename -- "$script")
-            # run find ~/.local/bin -xtype l -samefile "$script" -exec rm {} +
             while IFS= read -r link; do
                 [[ "$(readlink -f "$link")" == "$script" ]] && run rm "$link"
             done < <(find ~/.local/bin -type l)
-            # find ~/.local/bin -type l | while read -r link; do
-            #     [[ "$(readlink -f "$link")" == "$script" ]] && run rm "$link"
-            # done
             log "Script $name uninstalled"
         done < <(find "$dir" -maxdepth 2 -type f -perm -u+x -print0)
     done
@@ -98,13 +94,9 @@ uninstall_suckless_programs() {
         while IFS= read -r -d '' bname; do
             local name
             name=$(basename -- "$bname")
-            # run find ~/.local/bin -xtype l -samefile "$bname" -exec rm {} +
             while IFS= read -r link; do
                 [[ "$(readlink -f "$link")" == "$bname" ]] && run rm "$link"
             done < <(find ~/.local/bin -type l)
-            # find ~/.local/bin -type l | while read -r link; do
-            #     [[ "$(readlink -f "$link")" == "$bname" ]] && run rm "$link"
-            # done
             log "Program $name uninstalled"
         done < <(find "$dir" -maxdepth 1 -type f -perm -u+x -print0)
     done
