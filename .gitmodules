@@ -7,9 +7,6 @@
 [submodule "suckless/dmenu"]
 	path = suckless/dmenu
 	url = https://git.suckless.org/dmenu
-[submodule "suckless/sxiv"]
-	path = suckless/sxiv
-	url = https://github.com/xyb3rt/sxiv.git
 [submodule "scripts/rofi-bluetooth"]
 	path = scripts/rofi-bluetooth
 	url = https://github.com/nickclyde/rofi-bluetooth.git
