@@ -7,13 +7,12 @@ shopt -s nullglob
 # install.sh — gentle rice installer without sudo
 # By default runs in DRY-RUN mode (doesn't make any changes)
 # To apply changes: ./install.sh --apply
-# Usefull flags: -y/--yes (don't ask), -f/--force (overwrite),
+# Usefull flags: -y/--yes (yes to all changes),
 # --remote-submodules (update submodules from remote branches)
 # ==========================================
 
 DRY_RUN=1
 YES=0
-FORCE=0
 REMOTE_SUBMODULES=0
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &>/dev/null && pwd -P)
 BACKUPS_LIST_PATH="$SCRIPT_DIR/backups.tsv"
@@ -55,7 +54,7 @@ backup_path() {
         local bak="${path}.bak.${ts}"
 
         run mv -- "$path" "$bak"
-        run printf "%s\t%s\n" "$path" "$bak" >> "$BACKUPS_LIST_PATH"
+        printf "%s\t%s\n" "$path" "$bak" >> "$BACKUPS_LIST_PATH"
         log "Backup: $path -> $bak"
     fi
 }
@@ -86,15 +85,11 @@ create_symlink() {
     fi
 
     if [[ -e "$link" || -L "$link" ]]; then
-        if (( FORCE )); then
+        if confirm "$link exists. Backup and replace?"; then
             backup_path "$link"
         else
-            if confirm "$link exists. Backup and replace?"; then
-                backup_path "$link"
-            else
-                warn "Skip link: $link"
-                return 0    
-            fi
+            warn "Skip link: $link"
+            return 0    
         fi
     fi
 
@@ -114,11 +109,13 @@ install_configs() {
         create_symlink "$conf" "$HOME/.config/$name"
     done
 
-    while IFS= read -r conf; do
+    mapfile -t confs < <(find "$SCRIPT_DIR/dotfiles" -maxdepth 1 -type f)
+
+    for conf in "${confs[@]}"; do
         local name
         name=$(basename -- "$conf")
         create_symlink "$conf" "$HOME/$name"
-    done < <(find "$SCRIPT_DIR/dotfiles" -maxdepth 1 -type f)
+    done
 }
 
 install_local_bin() {
@@ -218,7 +215,6 @@ main() {
         case "$arg" in
             --apply) DRY_RUN=0 ;;
             -y|--yes) YES=1 ;;
-            -f|--force) FORCE=1 ;;
             --remote-submodules) REMOTE_SUBMODULES=1 ;;
             -h|--help) usage; exit 0 ;;
             *) warn "Unknown option: $arg" ;;
