@@ -5,7 +5,7 @@ shopt -s nullglob
 
 # ==========================================
 # install.sh — gentle rice installer without sudo
-# By default runs in DRY-RUN mode (don't make any changes)
+# By default runs in DRY-RUN mode (doesn't make any changes)
 # To apply changes: ./install.sh --apply
 # Usefull flags: -y/--yes (don't ask), -f/--force (overwrite),
 # --remote-submodules (update submodules from remote branches)
@@ -37,7 +37,7 @@ run() {
 
 confirm() {
     if (( YES )); then return 0; fi
-    local q="$1" response
+    local q="$1"
 
     read -r -p "$q [y/N] " response || true
     case "$response" in
@@ -114,11 +114,11 @@ install_configs() {
         create_symlink "$conf" "$HOME/.config/$name"
     done
 
-    while IFS= read -r -d '' conf; do
+    while IFS= read -r conf; do
         local name
         name=$(basename -- "$conf")
         create_symlink "$conf" "$HOME/$name"
-    done < <(find "$SCRIPT_DIR/dotfiles" -maxdepth 1 -type f -print0)
+    done < <(find "$SCRIPT_DIR/dotfiles" -maxdepth 1 -type f)
 }
 
 install_local_bin() {
@@ -142,6 +142,7 @@ install_submodule_scripts() {
     
     create_symlink "$base/dunst-media-control/media-control" "$HOME/.local/bin/media-control"
     create_symlink "$base/rofi-mixer/src/rofi-mixer" "$HOME/.local/bin/rofi-mixer"
+    create_symlink "$base/rofi-mixer/src/rofi-mixer.py" "$HOME/.local/bin/rofi-mixer.py"
     create_symlink "$base/wal-telegram/wal-telegram" "$HOME/.local/bin/wal-telegram"
 }
 
@@ -231,7 +232,7 @@ main() {
     install_local_bin
     suckless_injection
     install_submodule_scripts
-    install_themix_scripts
+    install_themix
     ensure_local_bin_on_path
 
     if (( DRY_RUN )); then

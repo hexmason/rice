@@ -3,13 +3,6 @@
 # set -euo pipefail
 IFS=$'\n\t'
 
-for cmd in wal pywalfox sxiv xdotool dunst; do
-    if ! command -v "$cmd" &>/dev/null; then
-        echo "Error: command '$cmd' not found."
-    exit 1
-    fi
-done
-
 source "$HOME/.cache/wal/colors.sh"
 
 path="${1:-}"
@@ -96,7 +89,8 @@ set_rofi_colors() {
 }
 
 restore_previous_theme() {
-    wal -R -q
+    wal -R -q -n 
+    ~/.fehbg
     pywalfox update
     xrdb -merge "$HOME/.Xresources"
     xdotool key Super+F5
@@ -118,8 +112,10 @@ apply_new_theme() {
         exit 1
     fi
 
-    wal --cols16 -q -i "$image_path"
+    wal --cols16 -q -i "$image_path" -n
+    feh --bg-fill "$image_path"
     pywalfox update
+
     source "$HOME/.cache/wal/colors.sh"
 
     set_color_variables

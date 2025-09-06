@@ -5,7 +5,7 @@ shopt -s nullglob
 
 # ==========================================
 # uninstall.sh — gentle rice uninstaller without sudo
-# By default runs in DRY-RUN mode (don't make any changes)
+# By default runs in DRY-RUN mode (doesn't make any changes)
 # To apply changes: ./install.sh --apply
 # Usefull flags: -y/--yes (don't ask), -f/--force (overwrite),
 # ==========================================
