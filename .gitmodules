@@ -4,9 +4,6 @@
 [submodule "suckless/st"]
 	path = suckless/st
 	url = https://github.com/hexmason/st.git
-[submodule "suckless/dmenu"]
-	path = suckless/dmenu
-	url = https://git.suckless.org/dmenu
 [submodule "scripts/rofi-bluetooth"]
 	path = scripts/rofi-bluetooth
 	url = https://github.com/nickclyde/rofi-bluetooth.git
@@ -28,3 +25,6 @@
 [submodule "scripts/dunst-media-control"]
 	path = scripts/dunst-media-control
 	url = https://github.com/Shringe/dunst-media-control.git
+[submodule "suckless/dmenu"]
+	path = suckless/dmenu
+	url = https://github.com/hexmason/dmenu.git
