@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+OLD_CLIP=$(xclip -o -selection clipboard 2>/dev/null)
+
+dmenu -l 20 -c -bw 2 -p emoji: < "${HOME}/.local/share/rice/emoji" \
+    | cut -d ' ' -f 1 \
+    | tr -d '\n' \
+    | xclip -selection clipboard
+
+xdotool key --clearmodifiers Shift+Insert
+
+if [ -n "$OLD_CLIP" ]; then
+    echo "$OLD_CLIP" | xclip -selection clipboard
+else
+    xclip -i /dev/null -selection clipboard
+fi
+

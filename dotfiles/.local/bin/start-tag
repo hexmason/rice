@@ -10,22 +10,22 @@ xdotool key Super+comma
 xdotool key Super+1
 
 xdotool key Super+2
-/usr/local/bin/st &
+st &
 sleep 0.25
 xdotool key Super+Alt+space
 
 xdotool key Super+3
-/usr/local/bin/st -e /bin/sh -c 'cat ~/.cache/wal/sequences; ranger' &
+st -e /bin/sh -c 'cat ~/.cache/wal/sequences; ranger' &
 sleep 0.25
 xdotool key Super+Alt+space
 
 xdotool key Super+1
-/usr/local/bin/st -e /bin/sh -c 'cat ~/.cache/wal/sequences; cava; zsh' &
+st -e /bin/sh -c 'cat ~/.cache/wal/sequences; cava; zsh' &
 sleep 0.25
-/usr/local/bin/st -e /bin/sh -c 'cat ~/.cache/wal/sequences; neofetch; bash' &
+st -e /bin/sh -c 'cat ~/.cache/wal/sequences; neofetch; bash' &
 sleep 0.25
-/usr/local/bin/st -e /bin/sh -c 'cat ~/.cache/wal/sequences; btop' &
+st -e /bin/sh -c 'cat ~/.cache/wal/sequences; btop' &
 sleep 0.25
 xdotool key Super+b
 
-/sbin/librewolf &
+librewolf &
