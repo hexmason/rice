@@ -1,9 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-# set -euo pipefail
+set -euo pipefail
+
 IFS=$'\n\t'
-
-source "$HOME/.cache/wal/colors.sh"
+CONFIG_DIR="$HOME/.config/"
+WAL_CACHE_DIR="$HOME/.cache/wal/"
+XRESOURCES_PATH="$HOME/.Xresources"
 
 path="${1:-}"
 
@@ -11,7 +13,7 @@ show_help() {
     cat <<EOF
 Usage: ${0##*/} [PATH_TO_IMAGE_OR_DIRECTORY]
 
-If PATH is provided, opens sxiv to select an image and generates theme from it.
+If PATH is provided, opens nsxiv to select an image and generates theme from it.
 If no PATH is provided, restores the previous theme from cache.
 
 Options:
@@ -28,72 +30,71 @@ if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
     exit 0
 fi
 
-set_qt_theme() {
+set_qt_colors() {
     local config_path="$1"
 
-    local active_colors="$color7, $color2, $color14, $color12, $color0, $color13, $color7, $color7, $color7, $color0, $color0, $color8, $color2, $color7, $color12, $color14, $color0, $color0, $color0, $color7, $color7"
-    local inactive_colors="$active_colors"
-    local disabled_colors="#808080, $color2, $color14, $color12, $color0, $color13, #808080, $color7, #808080, $color0, $color0, $color8, $color2, #808080, $color12, $color14, $color0, $color0, $color0, $color7, $color7"
-
-    sed -i "s/^active_colors=.*$/active_colors=$active_colors/" "$config_path"
-    sed -i "s/^inactive_colors=.*$/inactive_colors=$inactive_colors/" "$config_path"
-    sed -i "s/^disabled_colors=.*$/disabled_colors=$disabled_colors/" "$config_path"
+    cat "${WAL_CACHE_DIR}qt-wal.conf" > "$config_path"
 }
 
-set_gtk_theme() {
-    themix-oomox-gtk-theme -o wal-colors ~/.cache/wal/colors-oomox
-    themix-archdroid-icon-theme -o wal-icons ~/.cache/wal/colors-oomox
+set_gtk_colors() {
+    themix-oomox-gtk-theme -o wal-colors "${WAL_CACHE_DIR}colors-oomox"
+    themix-archdroid-icon-theme -o wal-icons "${WAL_CACHE_DIR}colors-oomox"
 }
 
-set_flameshot_theme() {
-    local config_path="$1"
-
-    sed -i "s/^contrastUiColor=.*$/contrastUiColor=$foreground/" "$config_path"
-    sed -i "s/^uiColor=.*$/uiColor=$color2/" "$config_path"
+set_flameshot_colors() {
+    cat "${WAL_CACHE_DIR}flameshot.ini" > "${CONFIG_DIR}flameshot.ini"
 }
 
-set_dunst_theme() {
-    local config_path="$1"
-
-    sed -i "s/dmenu = .*$/dmenu = dmenu-wal/ -p dunst:" "$config_path"
-    sed -i "s/background = .*$/background = \"$background\"/" "$config_path"
-    sed -i "s/foreground = .*$/foreground = \"$foreground\"/" "$config_path"
-    sed -i "s/frame_color = .*$/frame_color = \"$color2\"/" "$config_path"
-    sed -i "s/highlight = .*$/highlight = \"$color14\"/" "$config_path"
+set_dunst_colors() {
+    cat "${WAL_CACHE_DIR}dunstrc" > "${CONFIG_DIR}dunst/dunstrc"
 
     dunstctl reload
 }
 
-set_color_variables() {
-    normbordercolor="$color8"
-    normbgcolor="$background"
-    normfgcolor="$foreground"
-    selbordercolor="$foreground"
-    selbgcolor="$color2"
-    selfgcolor="$cursor"
-}
-
 set_dwm_colors() {
-    local xresources_path="$1"
+    cat "${WAL_CACHE_DIR}.Xresources" > "$XRESOURCES_PATH"
 
-    sed -i "s/^dwm\.normbordercolor:.*$/dwm.normbordercolor: $normbordercolor/" "$xresources_path"
-    sed -i "s/^dwm\.normbgcolor:.*$/dwm.normbgcolor: $normbgcolor/" "$xresources_path"
-    sed -i "s/^dwm\.normfgcolor:.*$/dwm.normfgcolor: $normfgcolor/" "$xresources_path"
-    sed -i "s/^dwm\.selbordercolor:.*$/dwm.selbordercolor: $selbgcolor/" "$xresources_path"
-    sed -i "s/^dwm\.selbgcolor:.*$/dwm.selbgcolor: $selbgcolor/" "$xresources_path"
-    sed -i "s/^dwm\.selfgcolor:.*$/dwm.selfgcolor: $selfgcolor/" "$xresources_path"
+    xrdb -merge "$XRESOURCES_PATH"
+    xdotool key Super+F5
 }
 
 set_rofi_colors() {
-    cp "$HOME/.cache/wal/colors-rofi-dark.rasi" "$HOME/.config/rofi/"
+    cat "${WAL_CACHE_DIR}colors-rofi-dark.rasi" > "${CONFIG_DIR}rofi/colors-rofi-dark.rasi"
+}
+
+set_theme() {
+    pywalfox update
+
+    set_dwm_colors
+    set_rofi_colors
+    set_flameshot_colors
+    set_dunst_colors
+    wal-telegram --palette "${WAL_CACHE_DIR}colors.sh" -g -r
+    set_qt_colors "${CONFIG_DIR}qt5ct/colors/qt-wal.conf"
+    set_qt_colors "${CONFIG_DIR}qt6ct/colors/qt-wal.conf"
+    set_gtk_colors
+}
+
+set_wallpaper() {
+    image_path=$1
+
+    feh --bg-fill "$1"
+}
+
+choose_wallpaper() {
+    image_path=$(find "$path" -type f | nsxiv -b -t -o -i)
+    set_wallpaper "$image_path"
+
+    echo "$image_path"
+}
+
+restore_wallpaper() {
+    ~/.fehbg
 }
 
 restore_previous_theme() {
+    restore_wallpaper
     wal -R -q -n 
-    ~/.fehbg
-    pywalfox update
-    xrdb -merge "$HOME/.Xresources"
-    xdotool key Super+F5
 }
 
 apply_new_theme() {
@@ -105,7 +106,7 @@ apply_new_theme() {
     fi
 
     local image_path
-    image_path=$(find "$path" -type f | sxiv -t -o -i)
+    image_path=$(choose_wallpaper)
 
     if [[ -z "$image_path" ]]; then
         echo "Exit: Image not found."
@@ -113,31 +114,37 @@ apply_new_theme() {
     fi
 
     wal --cols16 -q -i "$image_path" -n
-    feh --bg-fill "$image_path"
-    pywalfox update
+    set_wallpaper "$image_path"
+    set_theme
+}
 
-    source "$HOME/.cache/wal/colors.sh"
-
-    set_color_variables
-
-    set_dwm_colors "$HOME/.Xresources"
-    set_rofi_colors
-    set_flameshot_theme "$HOME/.config/flameshot/flameshot.ini"
-    set_dunst_theme "$HOME/.config/dunst/dunstrc"
-
-    xrdb -merge "$HOME/.Xresources"
-    xdotool key Super+F5
-    wal-telegram --palette "$HOME/.cache/wal/colors.sh" -g -r
-    set_qt_theme "$HOME/.config/qt5ct/colors/rice.conf"
-    set_qt_theme "$HOME/.config/qt6ct/colors/rice.conf"
-    set_gtk_theme
+apply_colorscheme() {
+    theme_name=$(wal --theme | grep -Ev "(Extra|Light Themes|Dark Themes)" | cut -d ' ' -f 3 | dmenu -l 20 -c -bw 2 -p "Colorscheme:")
+    
+    wal --theme "$theme_name"
+    set_theme
 }
 
 main() {
     if [[ -z "$path" ]]; then
         restore_previous_theme
     else
-        apply_new_theme "$path"
+        choice=$(printf "Set wallpaper\nApply colorscheme\nGenerate theme" | dmenu -i -p "What to do?")
+
+        case "$choice" in
+            "Set wallpaper")
+                choose_wallpaper
+                ;;
+            "Apply colorscheme")
+                apply_colorscheme
+                ;;
+            "Generate theme")
+                apply_new_theme "$path"
+                ;;
+            *)
+                exit 1
+                ;;
+        esac
     fi
 }
 
