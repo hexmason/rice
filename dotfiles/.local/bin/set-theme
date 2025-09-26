@@ -5,7 +5,7 @@ set -euo pipefail
 IFS=$'\n\t'
 CONFIG_DIR="$HOME/.config/"
 WAL_CACHE_DIR="$HOME/.cache/wal/"
-XRESOURCES_PATH="$HOME/.Xresources"
+XRESOURCES_PATH="$HOME/.config/x11/xresources"
 
 path="${1:-}"
 
@@ -52,7 +52,7 @@ set_dunst_colors() {
 }
 
 set_dwm_colors() {
-    cat "${WAL_CACHE_DIR}.Xresources" > "$XRESOURCES_PATH"
+    cat "${WAL_CACHE_DIR}xresources" > "$XRESOURCES_PATH"
 
     xrdb -merge "$XRESOURCES_PATH"
     xdotool key Super+F5
@@ -95,6 +95,8 @@ restore_wallpaper() {
 restore_previous_theme() {
     restore_wallpaper
     wal -R -q -n 
+    xrdb -merge "$XRESOURCES_PATH"
+    xdotool key Super+F5
 }
 
 apply_new_theme() {

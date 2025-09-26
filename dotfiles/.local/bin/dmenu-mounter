@@ -1,0 +1,120 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+USE_UDISKS=0
+
+for cmd in dmenu lsblk; do
+  command -v "$cmd" >/dev/null || { echo "$cmd is required"; exit 1; }
+done
+
+if command -v udisksctl >/dev/null; then
+  USE_UDISKS=1
+fi
+
+
+notify() {
+  if command -v notify-send >/dev/null; then
+    notify-send "  USB mount" "$1"
+  else
+    echo "$1"
+  fi
+}
+
+choose_device() {
+    local list="$1"
+    local msg="$2"
+
+    [ -z "$list" ] && { notify "$msg"; return 1; }
+    echo "$list" | dmenu -l 10 -p "choose device:"
+}
+
+while :
+do
+    devices_raw=$(lsblk -nr -o NAME,SIZE,RM,TYPE,MOUNTPOINT | awk '$3==1 && $4=="part" { printf "/dev/%s\t%s\t%s\t%s\t%s\n", $1, $2, ($3==""?"-":$3), ($4==""?"-":$4), ($5==""?"-":$5) }')
+    
+    if [ -z "$devices_raw" ]; then
+        notify "No removable partitions"
+        exit 0
+    fi
+    
+    not_mounted_list=$(echo "$devices_raw" | awk -F'\t' ' { if ($5=="-") { printf "%-18s  %-8s  %-6s  %-12s  %s\n", $1, $2, $3, $4, $5 } }')
+    mounted_list=$(echo "$devices_raw" | awk -F'\t' ' { if ($5!="-") { printf "%-18s  %-8s  %-6s  %-12s  %s\n", $1, $2, $3, $4, $5 } }')
+    
+    action=$(printf "Mount\nUnmount\nEject\nCancel" | dmenu -p "action:")
+    [ "$action" = "Cancel" ] || [ -z "$action" ] && exit 0
+    
+    # if [ "$action" = "Mount" ]; then
+    #     [ -z "$not_mounted_list" ] && { notify "No devices to mount."; continue; }
+    #     selection=$(echo "$not_mounted_list" | dmenu -l 10 -p "choose device:") && break || exit 0
+    # elif [ "$action" = "Unmount" ]; then
+    #     [ -z "$mounted_list" ] && { notify "No devices to unmount."; continue; }
+    #     selection=$(echo "$mounted_list" | dmenu -l 10 -p "choose device:") && break || exit 0
+    # elif [ "$action" = "Eject" ]; then
+    #     [ -z "$not_mounted_list" ] && { notify "No devices to eject."; continue; }
+    #     selection=$(echo "$not_mounted_list" | dmenu -l 10 -p "choose device:") && break || exit 0
+    # fi
+    case "$action" in
+        Mount)
+            selection=$(choose_device "$not_mounted_list" "No devices to mount.") || continue
+            ;;
+        Unmount)
+            selection=$(choose_device "$mounted_list" "No devices to unmount.") || continue
+            ;;
+        Eject)
+            selection=$(choose_device "$not_mounted_list" "No devices to eject.") || continue
+            ;;
+    esac
+
+    [ -z "$selection" ] && exit 0
+    break
+done
+
+[ -z "$selection" ] && exit 0
+
+dev=$(echo "$selection" | awk '{print $1}')
+
+if [ -z "$dev" ]; then
+  notify "Device is not selected"
+  exit 1
+fi
+
+
+if [ "$action" = "Mount" ]; then
+  if [ "$USE_UDISKS" -eq 1 ]; then
+    out=$(udisksctl mount -b "$dev" 2>&1) || { notify "Mount failed: $out"; exit 1; }
+    mountpoint=$(echo "$out" | sed -n 's/.* at //p' | tr -d '.\n')
+    notify "Mounted $dev at ${mountpoint:-unknown}"
+    exit 0
+  else
+    label=$(blkid -s LABEL -o value "$dev" 2>/dev/null || echo "")
+    mp="/run/media/$USER/${label:-$(basename "$dev")}"
+    sudo mkdir -p "$mp"
+    sudo mount "$dev" "$mp" && notify "Mounted $dev at $mp" || notify "Mount failed"
+    exit $?
+  fi
+elif [ "$action" = "Unmount" ]; then
+  if [ "$USE_UDISKS" -eq 1 ]; then
+    out=$(udisksctl unmount -b "$dev" 2>&1) || { notify "Unmount failed: $out"; exit 1; }
+    notify "Unmounted $dev"
+    exit 0
+  else
+    mp=$(lsblk -nr -o MOUNTPOINT "$dev" | head -n1)
+    if [ -z "$mp" ] || [ "$mp" = "-" ]; then
+      notify "Устройство не смонтировано"
+      exit 0
+    fi
+    sudo umount "$mp" && notify "Unmounted $dev" || notify "Umount failed"
+    exit $?
+  fi
+elif [ "$action" = "Eject" ]; then
+  if [ "$USE_UDISKS" -eq 1 ]; then
+    out=$(udisksctl power-off -b "$dev" 2>&1) || { notify "Eject failed: $out"; exit 1; }
+    notify "Ejected $dev"
+    exit 0
+  else
+    notify "Eject unavailable (no udisksctl)"
+    exit 1
+  fi
+fi
+
