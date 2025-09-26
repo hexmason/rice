@@ -60,6 +60,7 @@ GIT                                                 *mykeys-git*
 ------------------------------------------------------------------------------
 <leader>gg           Lazygit TUI
 <leader>gp           Preview hunk
+<leader>gr           Reset hunk
 ]c                   Next hunk
 [c                   Previous hunk
 

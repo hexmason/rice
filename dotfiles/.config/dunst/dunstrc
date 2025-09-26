@@ -8,7 +8,7 @@
 #########################################
 
 [global]
-    font = "Font Awesome 5 Free Regular 14"
+    font = "JetBrainsMono Nerd Font 14"
     markup = yes
     format = "<span><b>%s</b></span>\n%b"
     sort = yes
@@ -47,20 +47,20 @@
     per_monitor_dpi = false
 
 [urgency_low]
-    background = "#200e20"
-    foreground = "#c7c2c7"
-    frame_color = "#50635c"
+    background = "#031A16"
+    foreground = "#81B5AC"
+    frame_color = "#883E96"
     timeout = 10
 
 [urgency_normal]
-    background = "#200e20"
-    foreground = "#c7c2c7"
-    frame_color = "#50635c"
-    highlight = "#938F84"
+    background = "#031A16"
+    foreground = "#81B5AC"
+    frame_color = "#883E96"
+    highlight = "#963E4C"
     timeout = 10
 
 [urgency_critical]
-    background = "#200e20"
-    foreground = "#c7c2c7"
-    frame_color = "#50635c"
+    background = "#031A16"
+    foreground = "#81B5AC"
+    frame_color = "#883E96"
     timeout = 0

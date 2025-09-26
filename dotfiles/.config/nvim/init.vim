@@ -7,6 +7,7 @@
 "                           "
 """""""""""""""""""""""""""""
 set encoding=utf8
+set termguicolors
 
 set nocompatible
 
@@ -40,10 +41,10 @@ set clipboard=unnamedplus
 call plug#begin()
 
 " Themes
-Plug 'morhetz/gruvbox'
+Plug 'rafi/awesome-vim-colorschemes'
 
 " File manager
-Plug 'scrooloose/nerdtree'
+Plug 'nvim-tree/nvim-tree.lua'
 
 " Autocomplete
 Plug 'hrsh7th/nvim-cmp'
@@ -122,13 +123,13 @@ let g:ale_python_black_executable = 'black'
 let g:ale_fix_on_save = 0
 
 " NERDTree
-nmap <C-n> :NERDTreeToggle<CR>
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * NERDTree | wincmd p
-nnoremap <leader>n :NERDTreeToggle<CR>
-let g:NERDTreeFileLines = 1
-let g:NERDTreeIgnore = ['^node_modules$', '^__pycache__$']
-autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NERDTree') && b:NERDTree.isTabTree() | quit | endif
+nmap <C-n> :NvimTreeToggle<CR>
+" autocmd StdinReadPre * let s:std_in=1
+" autocmd VimEnter * NERDTree | wincmd p
+" nnoremap <leader>n :NERDTreeToggle<CR>
+" let g:NERDTreeFileLines = 1
+let g:NvimTreeIgnore = ['^node_modules$', '^__pycache__$']
+autocmd BufEnter * if tabpagenr('$') == 1 && winnr('$') == 1 && exists('b:NvimTree') && b:NvimTree.isTabTree() | quit | endif
 
 " Buffers and splits settings
 set splitright

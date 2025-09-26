@@ -34,6 +34,8 @@ cmp.setup({
   mapping = {
     ['<C-Space>'] = cmp.mapping.complete(),
     ['<CR>'] = cmp.mapping.confirm({ select = true }),
+    ['<C-n>'] = cmp.mapping.select_next_item(),
+    ['<C-p>'] = cmp.mapping.select_prev_item(),
   },
 })
 
@@ -98,6 +100,8 @@ require("toggleterm").setup{
 }
 
 require('gitsigns').setup()
+
+require("nvim-tree").setup()
 
 vim.keymap.set("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<CR>",
   { desc = "Diagnostics (Trouble)" })
