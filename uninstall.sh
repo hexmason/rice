@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -Eeuo pipefail
+#set -Eeuo pipefail
 shopt -s nullglob
 
 # ==========================================
@@ -28,6 +28,21 @@ run() {
     else
         "$@"
     fi
+}
+
+uninstall_local_share() {
+    log "Uninstalling local share files..."
+    local target_dir="$SCRIPT_DIR/dotfiles/.local/share"
+
+    for item in "$target_dir"/*; do
+        [[ -e "$item" ]] || continue
+        local name
+        name=$(basename -- "$item")
+        while IFS= read -r link; do
+            [[ "$(readlink -f "$link")" == "$item" ]] && run rm "$link"
+        done < <(find ~/.local/bin -type l)
+        log "Share $name uninstalled"
+    done
 }
 
 uninstall_configs() {
@@ -140,6 +155,7 @@ main() {
         esac
     done
 
+    uninstall_local_share
     uninstall_configs
     uninstall_local_bin
     uninstall_suckless_programs

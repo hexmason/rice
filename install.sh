@@ -97,9 +97,20 @@ create_symlink() {
     log "Linked: $link -> $target"
 }
 
+install_local_share() {
+    log "Installing local share files..."
+    local target_dir="$SCRIPT_DIR/dotfiles/.local/share"
+
+    for item in "$target_dir"/*; do
+        [[ -e "$item" ]] || continue
+        local name
+        name=$(basename -- "$item")
+        create_symlink "$item" "$HOME/.local/share/$name"
+    done
+}
+
 install_configs() {
     log "Installing configs..."
-    run mkdir -p -- "$HOME/.config"
     local target_dir="$SCRIPT_DIR/dotfiles/.config"
 
     for conf in "$target_dir"/*; do
@@ -109,18 +120,12 @@ install_configs() {
         create_symlink "$conf" "$HOME/.config/$name"
     done
 
-    mapfile -t confs < <(find "$SCRIPT_DIR/dotfiles" -maxdepth 1 -type f)
-
-    for conf in "${confs[@]}"; do
-        local name
-        name=$(basename -- "$conf")
-        create_symlink "$conf" "$HOME/$name"
-    done
+    create_symlink "$SCRIPT_DIR/dotfiles/.config/x11/xprofile" "$HOME/.xprofile"
+    create_symlink "$SCRIPT_DIR/dotfiles/.config/shell/profile" "$HOME/.profile"
 }
 
 install_local_bin() {
     log "Installig scripts..."
-    run mkdir -p -- "$HOME/.local/bin"
     local target_dir="$SCRIPT_DIR/dotfiles/.local/bin"
     
     for script in "$target_dir"/*; do
@@ -133,11 +138,11 @@ install_local_bin() {
 
 install_submodule_scripts() {
     log "Installing scripts from submodules..."
-    run mkdir -p -- "$HOME/.local/bin"
     local base="$SCRIPT_DIR/scripts"
     [[ -d "$base" ]] || { warn "No submodule scripts directory"; return 0; }
     
     create_symlink "$base/dunst-media-control/media-control" "$HOME/.local/bin/media-control"
+    create_symlink "$base/rofi-bluetooth/rofi-bluetooth" "$HOME/.local/bin/rofi-bluetooth"
     create_symlink "$base/rofi-mixer/src/rofi-mixer" "$HOME/.local/bin/rofi-mixer"
     create_symlink "$base/rofi-mixer/src/rofi-mixer.py" "$HOME/.local/bin/rofi-mixer.py"
     create_symlink "$base/wal-telegram/wal-telegram" "$HOME/.local/bin/wal-telegram"
@@ -145,7 +150,6 @@ install_submodule_scripts() {
 
 install_themix() {
     log "Installing themix..."
-    run mkdir -p -- "$HOME/.local/share/themix"
     local base="$SCRIPT_DIR/scripts"
     [[ -d "$base" ]] || { warn "No submodule scripts directory"; return 0; }
 
@@ -224,6 +228,7 @@ main() {
     [[ -e "$BACKUPS_LIST_PATH" ]] && run rm -- "$BACKUPS_LIST_PATH"
     check_dependencies
     update_submodules
+    install_local_share
     install_configs
     install_local_bin
     suckless_injection
