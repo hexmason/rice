@@ -1,0 +1,15 @@
+dmenu.font: JetBrainsMonoNerdFontMono-14
+dmenu.background: #031A16
+dwm.foreground: #81B5AC
+dmenu.selbackground: #883E96
+dmenu.selforeground: #81B5AC
+
+dwm.normbordercolor: #2B685E
+dwm.normbgcolor: #031A16
+dwm.normfgcolor: #81B5AC
+dwm.selbordercolor: #883E96
+dwm.selbgcolor: #883E96
+dwm.selfgcolor: #81B5AC
+
+Xcursor.theme: Bibata-Original-Ice
+Xcursor.size: 24

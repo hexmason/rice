@@ -1,5 +1,9 @@
 [Default Applications]
 
+x-scheme-handler/http=librewolf.desktop
+x-scheme-handler/https=librewolf.desktop
+text/html=librewolf.desktop
+application/xhtml+xml=librewolf.desktop
 text/plain=text.desktop;
 text/x-shellscript=text.desktop;
 x-scheme-handler/magnet=torrent.desktop;
