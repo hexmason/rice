@@ -42,7 +42,7 @@ set_gtk_colors() {
 }
 
 set_flameshot_colors() {
-    cat "${WAL_CACHE_DIR}flameshot.ini" > "${CONFIG_DIR}flameshot.ini"
+    cat "${WAL_CACHE_DIR}flameshot.ini" > "${CONFIG_DIR}flameshot/flameshot.ini"
 }
 
 set_dunst_colors() {
