@@ -122,6 +122,7 @@ install_configs() {
 
     create_symlink "$SCRIPT_DIR/dotfiles/.config/x11/xprofile" "$HOME/.xprofile"
     create_symlink "$SCRIPT_DIR/dotfiles/.config/shell/profile" "$HOME/.profile"
+    create_symlink "$SCRIPT_DIR/dotfiles/.config/shell/xinitrc" "$HOME/.xinitrc"
 }
 
 install_local_bin() {

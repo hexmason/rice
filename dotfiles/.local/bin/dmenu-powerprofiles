@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+CURRENT_PROFILE=$(powerprofilesctl get)
+
+case $CURRENT_PROFILE in
+    performance)
+        preselect=0
+        ;;
+    balanced)
+        preselect=1
+        ;;
+    power-saver)
+        preselect=2
+        ;;
+esac
+
+printf "performance\nbalanced\npower-saver" | dmenu -n "$preselect" -p "Set powerprofile:" | xargs powerprofilesctl set 

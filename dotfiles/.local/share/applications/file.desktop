@@ -1,4 +1,5 @@
 [Desktop Entry]
 Type=Application
-Name=File Manager
-Exec=st -e ranger %u
+Name=ranger
+Exec=ranger-wal %u
+Terminal=true

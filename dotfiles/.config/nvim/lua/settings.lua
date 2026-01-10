@@ -1,47 +1,47 @@
 local lspconfig = require('lspconfig')
 
-lspconfig.pyright.setup{}
+-- ALE linters
+vim.g.ale_linters = {
+  python = {'flake8', 'mypy'},
+  c      = {'clang'},
+  cpp    = {'clang'},
+  go     = {'gopls'},
+  rust   = {'analyzer'},
+  bash   = {'shellcheck'},
+  sh     = {'shellcheck'},
+}
 
+-- ALE fixers
+vim.g.ale_fixers = {
+  go     = {'gofmt'},
+  python = {'black'},
+  c      = {'clang-format'},
+  bash   = {'shfmt'},
+  sh     = {'shfmt'},
+}
+
+vim.g.ale_python_flake8_executable = 'flake8'
+vim.g.ale_python_black_executable = 'black'
+vim.g.ale_fix_on_save = 0
+
+-- LSP servers
+lspconfig.pyright.setup{}
 lspconfig.clangd.setup{
   capabilities = require('cmp_nvim_lsp').default_capabilities(),
 }
-
-lspconfig.kotlin_language_server.setup{
-  cmd = { "kotlin-language-server" },
-  initializationOptions = {},
-  on_attach = function(client, bufnr)
-  end,
-}
-
+lspconfig.kotlin_language_server.setup{}
 lspconfig.html.setup {}
 lspconfig.cssls.setup {}
 lspconfig.jsonls.setup {}
 
+-- Diagnostics
 vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float)
 
-local cmp = require'cmp'
-cmp.setup({
-  snippet = {
-    expand = function(args)
-      require('luasnip').lsp_expand(args.body)
-    end,
-  },
-  sources = {
-    { name = 'nvim_lsp' },
-    { name = 'buffer' },
-    { name = 'path' },
-  },
-  mapping = {
-    ['<C-Space>'] = cmp.mapping.complete(),
-    ['<CR>'] = cmp.mapping.confirm({ select = true }),
-    ['<C-n>'] = cmp.mapping.select_next_item(),
-    ['<C-p>'] = cmp.mapping.select_prev_item(),
-  },
-})
-
+-- Lualine
 require('lualine').setup()
 
-require('telescope').setup{
+-- Telescope
+require('telescope').setup {
   defaults = {
     layout_config = { horizontal = { preview_width = 0.6 } },
     sorting_strategy = "ascending",
@@ -64,9 +64,10 @@ vim.keymap.set("n", "<leader>fc", function()
   require("telescope.builtin").lsp_workspace_symbols({
     symbols = { "Class", "Interface", "Struct", "Enum" }
   })
-end, { desc = "Поиск по классам" })
+end, { desc = "Search by classes" })
 
-require("bufferline").setup{
+-- Bufferline
+require("bufferline").setup {
   options = {
     numbers = "none",
     diagnostics = "nvim_lsp",
@@ -76,19 +77,17 @@ require("bufferline").setup{
   }
 }
 
+-- Treesitter
 require('nvim-treesitter.configs').setup {
   ensure_installed = { "c", "cpp", "lua", "python", "kotlin", "rust", "go", "javascript", "html", "css", "json", "bash" },
-  highlight = {
-    enable = true,
-    additional_vim_regex_highlighting = false,
-  },
-  indent = {
-    enable = true,
-  },
+  highlight = { enable = true, additional_vim_regex_highlighting = false },
+  indent = { enable = true },
 }
 
+-- Trouble
 require("trouble").setup {}
 
+-- ToggleTerm
 require("toggleterm").setup{
   size = 12,
   open_mapping = [[<C-\>]],
@@ -99,22 +98,12 @@ require("toggleterm").setup{
   terminal_mappings = true,
 }
 
+-- Gitsigns
 require('gitsigns').setup()
 
+-- Nvim-tree
 require("nvim-tree").setup()
 
-vim.keymap.set("n", "<leader>xx", "<cmd>Trouble diagnostics toggle<CR>",
-  { desc = "Diagnostics (Trouble)" })
-vim.keymap.set("n", "<leader>xs", "<cmd>Trouble symbols toggle focus=false<CR>",
-  { desc = "Symbols (Trouble)" })
-
-vim.g.db_ui_save_location = '~/.db_ui'
+-- DBUI
+vim.g.db_ui_save_location = '~/.cache/db_ui'
 vim.g.db_ui_use_nerd_fonts = 1
-vim.keymap.set('n', '<Leader>tt', '<cmd>ToggleTerm<CR>', { desc = 'Toggle Terminal' })
-
-vim.keymap.set('n', ']c', function() require('gitsigns').next_hunk() end)
-vim.keymap.set('n', '[c', function() require('gitsigns').prev_hunk() end)
-vim.keymap.set('n', '<leader>gp', function() require('gitsigns').preview_hunk() end)
-vim.keymap.set('n', '<leader>gr', function() require('gitsigns').reset_hunk() end)
-
-vim.keymap.set("n", "<leader>gg", "<cmd>LazyGit<CR>", { desc = "LazyGit" })

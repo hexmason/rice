@@ -1,13 +1,16 @@
 #!/bin/sh
 
+export PATH="$PATH:~/.local/bin"
 export PATH="$PATH:$(find ~/.local/bin -type d | paste -sd ':' -)"
 export PATH="$JAVA_HOME/bin:$PATH"
+export PATH="$GOPATH/bin:$PATH"
 
 export VISUAL="nvim"
 export EDITOR="nvim"
 export BROWSER="librewolf"
 export TERMINAL="st"
 export TERMINAL_PROG="st"
+export OPENER="rifle"
 
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"

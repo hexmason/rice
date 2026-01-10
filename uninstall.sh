@@ -57,11 +57,9 @@ uninstall_configs() {
         log "Config $conf uninstalled"
     done
 
-    while IFS= read -r -d '' conf; do
-        while IFS= read -r link; do
-            [[ "$(readlink -f "$link")" == "$conf" ]] && run rm "$link"
-        done < <(find ~/.config -type l)
-    done < <(find "$SCRIPT_DIR/dotfiles" -maxdepth 1 -type f -print0)
+    run rm "$HOME/.xprofile"
+    run rm "$HOME/.profile"
+    run rm "$HOME/.xinitrc"
 }
 
 uninstall_local_bin() {

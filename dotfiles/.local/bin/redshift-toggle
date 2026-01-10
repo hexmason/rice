@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+REDSHIFT_PID="$(pgrep redshift)"
+LATITUDE="55.75"
+LONGITUDE="30.50"
+TEMP_DAY="6500"
+TEMP_NIGHT="3700"
+
+if [ -z "$REDSHIFT_PID" ]; then
+    redshift -l $LATITUDE:$LONGITUDE -t $TEMP_DAY:$TEMP_NIGHT &
+    notify-send "  Redshift enabled"
+else
+    kill "$REDSHIFT_PID"
+    notify-send "  Redshift disabled"
+fi

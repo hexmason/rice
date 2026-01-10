@@ -18,6 +18,8 @@ video/x-matroska=video.desktop
 video/mp4=video.desktop
 inode/directory=file.desktop
 application/x-shellscript=nvim.desktop
+x-scheme-handler/discord=vesktop.desktop
+application/x-ms-dos-executable;application/x-wine-extension-msp;application/x-msi;application/x-msdos-program;text/win-bat;=PortProton.desktop
 
 [Added Associations]
 application/x-shellscript=nvim.desktop;
