@@ -81,7 +81,7 @@ Plug 'nvim-telescope/telescope.nvim'
 Plug 'moll/vim-bbye'
 
 " Treesitter
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate', 'branch': 'master'}
 
 " Database tools
 Plug 'tpope/vim-dadbod'
@@ -90,6 +90,7 @@ Plug 'kristijanhusak/vim-dadbod-completion'
 
 " Terminal
 Plug 'akinsho/toggleterm.nvim', {'tag' : '*'}
+Plug 'voldikss/vim-floaterm'
 
 " Git
 Plug 'tpope/vim-fugitive'

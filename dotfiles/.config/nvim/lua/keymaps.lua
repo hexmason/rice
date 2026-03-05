@@ -49,4 +49,11 @@ vim.keymap.set('n', '<leader>gr', function() require('gitsigns').reset_hunk() en
 vim.keymap.set("n", "<leader>gg", "<cmd>LazyGit<CR>", { desc = "LazyGit" })
 
 -- DBUI
-vim.keymap.set('n', '<Leader>db', '<cmd>DBUI<CR>', { silent = true })
+vim.keymap.set('n', '<Leader>db', '<cmd>DBUIToggle<CR>', { silent = true })
+
+-- Floaterm
+vim.keymap.set({ "n", "t" }, "<F7>", "<cmd>FloatermToggle<CR>", opts)
+vim.keymap.set({ "n", "t" }, "<F8>", "<cmd>FloatermNew<CR>", opts)
+vim.keymap.set({ "n", "t" }, "<F9>", "<cmd>FloatermNext<CR>", opts)
+vim.keymap.set({ "n", "t" }, "<F10>", "<cmd>FloatermPrev<CR>", opts)
+vim.keymap.set({ "n", "t" }, "<F11>", "<cmd>FloatermKill<CR>", opts)
